@@ -17,7 +17,7 @@ def ask_ai(prompt):
         ]
     }
 
-    r = requests.post(url, json=payload)
+    r = requests.post(url + f"?key={API_KEY}", json=payload)
 
     return r.json()["candidates"][0]["content"]["parts"][0]["text"]
 
