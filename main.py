@@ -9,7 +9,7 @@ API_KEY = os.getenv("GEMINI_API_KEY")
 
 def ask_ai(prompt):
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={API_KEY}"
+    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
 
     payload = {
         "contents": [
