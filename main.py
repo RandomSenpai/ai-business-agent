@@ -50,7 +50,7 @@ def list_models():
 @app.get("/plan")
 def plan():
 
-prompt = """
+    prompt = """
 You are an AUTONOMOUS BUSINESS AGENT.
 
 You run 3 income streams:
