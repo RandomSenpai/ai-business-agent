@@ -50,21 +50,34 @@ def list_models():
 @app.get("/plan")
 def plan():
 
-    prompt = """
-You are my AI business assistant.
+prompt = """
+You are an AUTONOMOUS BUSINESS AGENT.
 
-I run:
-- tutoring
-- cologne resale
-- cello gigs
+You run 3 income streams:
+1. Tutoring business
+2. Cologne resale business
+3. Cello gig business
 
-Do:
-1. find opportunities
-2. rank them
-3. suggest schedule changes
-4. draft outreach messages
+YOUR JOB:
+- find actionable opportunities (not general advice)
+- rank the TOP 5 opportunities ONLY
+- give specific next actions I can do TODAY
+- NO questions back to user
+- NO explanations
+- NO essays
 
-Return structured plan.
+OUTPUT FORMAT:
+
+1. TOP OPPORTUNITIES (ranked)
+- each must be specific and actionable
+
+2. TODAY ACTION PLAN (hour-by-hour)
+
+3. LEADS TO PURSUE (real-world targets like schools, platforms, venues)
+
+4. MONEY PRIORITY FOCUS (what makes most money fastest)
+
+Be strict, concise, and operational.
 """
 
     return {"result": ask_ai(prompt)}
