@@ -9,7 +9,9 @@ API_KEY = os.getenv("GEMINI_API_KEY")
 
 def ask_ai(prompt):
 
-    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+    model = "gemini-1.5-flash-latest"
+
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 
     payload = {
         "contents": [
@@ -18,21 +20,17 @@ def ask_ai(prompt):
     }
 
     r = requests.post(url + f"?key={API_KEY}", json=payload)
-
     data = r.json()
 
-    # DEBUG RETURN IF ERROR
     if "error" in data:
         return {
             "error": "Gemini API failed",
             "details": data["error"]
         }
 
-    # SUCCESS CASE
     if "candidates" in data:
         return data["candidates"][0]["content"]["parts"][0]["text"]
 
-    # UNKNOWN CASE
     return {"error": "Unexpected response", "raw": data}
 
 
