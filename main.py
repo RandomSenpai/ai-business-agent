@@ -19,7 +19,21 @@ def ask_ai(prompt):
 
     r = requests.post(url + f"?key={API_KEY}", json=payload)
 
-    return r.json()["candidates"][0]["content"]["parts"][0]["text"]
+    data = r.json()
+
+    # DEBUG RETURN IF ERROR
+    if "error" in data:
+        return {
+            "error": "Gemini API failed",
+            "details": data["error"]
+        }
+
+    # SUCCESS CASE
+    if "candidates" in data:
+        return data["candidates"][0]["content"]["parts"][0]["text"]
+
+    # UNKNOWN CASE
+    return {"error": "Unexpected response", "raw": data}
 
 
 @app.get("/")
