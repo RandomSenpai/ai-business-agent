@@ -38,6 +38,14 @@ def ask_ai(prompt):
 def home():
     return {"status": "AI agent running"}
 
+@app.get("/models")
+def list_models():
+
+    url = "https://generativelanguage.googleapis.com/v1beta/models?key=" + API_KEY
+
+    r = requests.get(url)
+
+    return r.json()
 
 @app.get("/plan")
 def plan():
