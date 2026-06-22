@@ -8,10 +8,9 @@ API_KEY = os.getenv("GEMINI_API_KEY")
 
 
 def ask_ai(prompt):
-
     model = "gemini-2.5-flash"
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={API_KEY}"
 
     payload = {
         "contents": [
@@ -19,20 +18,18 @@ def ask_ai(prompt):
         ]
     }
 
-    r = requests.post(url + f"?key={API_KEY}", json=payload)
-    data = r.json()
+    try:
+        r = requests.post(url, json=payload, timeout=20)
+        data = r.json()
 
-    if "error" in data:
-        return {
-            "error": "Gemini API failed",
-            "details": data["error"]
-        }
+        if "error" in data:
+            return {"error": data["error"]}
 
-    if "candidates" in data:
+        # safer extraction
         return data["candidates"][0]["content"]["parts"][0]["text"]
 
-    return {"error": "Unexpected response", "raw": data}
-
+    except Exception as e:
+        return {"error": str(e)}
 
 @app.get("/")
 def home():
@@ -49,35 +46,55 @@ def list_models():
 
 @app.get("/plan")
 def plan():
-
+    prompt = YOUR_PROMPT_HERE
+    return ask_ai(prompt)
+    
     prompt = """
-You are an AUTONOMOUS BUSINESS AGENT.
+You are an AUTONOMOUS BUSINESS OPERATIONS ENGINE.
 
-You run 3 income streams:
-1. Tutoring business
-2. Cologne resale business
-3. Cello gig business
+You manage:
+- Tutoring business (clients, schools, parents)
+- Cologne resale business (buyers, sourcing, margins)
+- Cello gig business (weddings, venues, events)
 
-YOUR JOB:
-- find actionable opportunities (not general advice)
-- rank the TOP 5 opportunities ONLY
-- give specific next actions I can do TODAY
-- NO questions back to user
-- NO explanations
-- NO essays
+RULES:
+- You MUST output VALID JSON ONLY.
+- No explanations.
+- No markdown.
+- No extra text.
 
-OUTPUT FORMAT:
+JSON FORMAT:
 
-1. TOP OPPORTUNITIES (ranked)
-- each must be specific and actionable
+{
+  "top_opportunities": [
+    {
+      "rank": 1,
+      "business": "tutoring | cologne | cello",
+      "opportunity": "",
+      "why_it_matters": "",
+      "expected_income": "",
+      "difficulty": 1-10
+    }
+  ],
+  "today_plan": [
+    {
+      "time": "",
+      "task": "",
+      "business": ""
+    }
+  ],
+  "leads": [
+    {
+      "type": "school | venue | buyer | platform",
+      "name": "",
+      "action": ""
+    }
+  ],
+  "money_focus": ""
+}
 
-2. TODAY ACTION PLAN (hour-by-hour)
-
-3. LEADS TO PURSUE (real-world targets like schools, platforms, venues)
-
-4. MONEY PRIORITY FOCUS (what makes most money fastest)
-
-Be strict, concise, and operational.
+Be aggressive about prioritizing income.
+Only include actionable items that can be executed in real life.
 """
 
     return {"result": ask_ai(prompt)}
